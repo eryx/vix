@@ -24,4 +24,6 @@ git clone git@github.com:eryx/vix.git ~/.vim/bundle/vix
 * vim-go [https://github.com/fatih/vim-go](https://github.com/fatih/vim-go)
 * go filetype plugin [https://github.com/google/vim-ft-go](https://github.com/google/vim-ft-go)
 * molokai scheme [https://github.com/tomasr/molokai](https://github.com/tomasr/molokai)
+* lightline [https://github.com/itchyny/lightline.vim](https://github.com/itchyny/lightline.vim)
+* tagbar [https://github.com/majutsushi/tagbar](https://github.com/majutsushi/tagbar)
 
