@@ -26,6 +26,8 @@ colorscheme molokai
 
 " take NERDTree on/off
 "autocmd vimenter * NERDTree
+let NERDTreeWinSize=20
+let NERDTreeWinPos='left'
 map <C-n> :NERDTreeMirror<CR>
 map <C-n> :NERDTreeToggle<CR>
 
@@ -51,4 +53,7 @@ nmap <A-right> :vertical resize +5<CR>
 nmap <A-up> :resize +2<CR>
 nmap <A-down> :resize -2<CR>
 
+" highlight over length (100) lines with RED bg-color
+highlight OverLength ctermbg=red ctermfg=white guibg=red
+match OverLength /\%101v.\+/
 
