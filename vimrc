@@ -11,9 +11,6 @@ set number
 set nocompatible
 set switchbuf=useopen,usetab
 
-" enable basic mouse support (selection, placement and scrolling)
-set mouse=a
-
 " highlight the current line background
 set cursorline
 
