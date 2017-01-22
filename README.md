@@ -6,16 +6,20 @@ vim environment
 
 ``` shell
 mkdir -p ~/.vim/autoload ~/.vim/bundle && \
-curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 git clone git@github.com:eryx/vix.git ~/.vim/bundle/vix
+/bin/cp -rf ~/.vim/bundle/vix/autoload/pathogen.vim ~/.vim/autoload/pathogen.vim
+
+echo -e '\nalias vix="vim -u ~/.vim/bundle/vix/vimrc"\n' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 
-## run
+## use
+``` shell
+echo -e '#include <stdio.h>\n\nmain()\n{\n  printf("hello world");\n}\n' > main.c
 
-1. vim -u ~/.vim/bundle/vix/vimrc
-2. add `alias vix="vim -u ~/.vim/bundle/vix/vimrc"` to `~/.bashrc`
-
+vix main.c
+```
 
 ## The third party software of this product includes or reference
 
