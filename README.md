@@ -7,7 +7,7 @@ vim environment
 ``` shell
 mkdir -p ~/.vim/autoload ~/.vim/bundle
 
-git clone git@github.com:eryx/vix.git ~/.vim/bundle/vix
+git clone https://github.com/eryx/vix.git ~/.vim/bundle/vix
 /bin/cp -rf ~/.vim/bundle/vix/autoload/pathogen.vim ~/.vim/autoload/pathogen.vim
 
 echo -e '\nalias vix="vim -u ~/.vim/bundle/vix/vimrc"\n' >> ~/.bashrc
