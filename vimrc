@@ -10,6 +10,7 @@ set autowrite
 set number
 set nocompatible
 set switchbuf=useopen,usetab
+set hlsearch
 
 " highlight the current line background
 set cursorline
