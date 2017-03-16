@@ -11,6 +11,7 @@ set number
 set nocompatible
 set switchbuf=useopen,usetab
 set hlsearch
+set pastetoggle=<F2>
 
 " highlight the current line background
 set cursorline
@@ -18,6 +19,10 @@ set cursorline
 " display the cursor position on the bottom right corner
 set ruler
 
+" cmd alias name W to w
+cnoreabbrev W w
+" hot key to save and quit
+nmap <C-F12> :wq<CR>
 
 filetype plugin on
 filetype indent on
@@ -88,4 +93,10 @@ au FileType go nmap <leader>t <Plug>(go-test)
 let g:lightline = {
     \ 'colorscheme': 'default',
     \ }
+
+" auto jump to last edit position when opening files
+autocmd BufReadPost *
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal! g`\"" |
+    \ endif
 
