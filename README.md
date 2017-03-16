@@ -31,4 +31,4 @@ vix main.c
 * molokai scheme [https://github.com/tomasr/molokai](https://github.com/tomasr/molokai)
 * lightline [https://github.com/itchyny/lightline.vim](https://github.com/itchyny/lightline.vim)
 * tagbar [https://github.com/majutsushi/tagbar](https://github.com/majutsushi/tagbar)
-
+* autosave [https://github.com/907th/vim-auto-save](https://github.com/907th/vim-auto-save)
