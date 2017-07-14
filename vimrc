@@ -33,7 +33,7 @@ execute pathogen#infect('~/.vim/bundle/{}')
 execute pathogen#infect('~/.vim/bundle/vix/bundle/{}')
 
 " enable AutoSave on Vim startup
-let g:auto_save = 1
+let g:auto_save = 0
 let g:auto_save_events = ["InsertLeave", "TextChanged"]
 
 " theme: monokai
@@ -102,4 +102,8 @@ autocmd BufReadPost *
     \ if line("'\"") > 0 && line("'\"") <= line("$") |
     \   exe "normal! g`\"" |
     \ endif
+
+
+" clang-format
+autocmd FileType c,cpp ClangFormatAutoEnable
 
