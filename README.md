@@ -32,3 +32,4 @@ vix main.c
 * lightline [https://github.com/itchyny/lightline.vim](https://github.com/itchyny/lightline.vim)
 * tagbar [https://github.com/majutsushi/tagbar](https://github.com/majutsushi/tagbar)
 * autosave [https://github.com/907th/vim-auto-save](https://github.com/907th/vim-auto-save)
+* clang-format [https://github.com/rhysd/vim-clang-format](https://github.com/rhysd/vim-clang-format)
