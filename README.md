@@ -24,12 +24,12 @@ vix main.c
 
 ## The third party software of this product includes or reference
 
-* pathogen.vim [https://github.com/tpope/vim-pathogen](https://github.com/tpope/vim-pathogen)
-* nerd tree [https://github.com/scrooloose/nerdtree](https://github.com/scrooloose/nerdtree)
-* vim-go [https://github.com/fatih/vim-go](https://github.com/fatih/vim-go)
-* go filetype plugin [https://github.com/google/vim-ft-go](https://github.com/google/vim-ft-go)
-* molokai scheme [https://github.com/tomasr/molokai](https://github.com/tomasr/molokai)
-* lightline [https://github.com/itchyny/lightline.vim](https://github.com/itchyny/lightline.vim)
-* tagbar [https://github.com/majutsushi/tagbar](https://github.com/majutsushi/tagbar)
-* autosave [https://github.com/907th/vim-auto-save](https://github.com/907th/vim-auto-save)
+* auto save [https://github.com/907th/vim-auto-save](https://github.com/907th/vim-auto-save)
 * clang-format [https://github.com/rhysd/vim-clang-format](https://github.com/rhysd/vim-clang-format)
+* ft-go [https://github.com/google/vim-ft-go](https://github.com/google/vim-ft-go)
+* lightline [https://github.com/itchyny/lightline.vim](https://github.com/itchyny/lightline.vim)
+* molokai scheme [https://github.com/tomasr/molokai](https://github.com/tomasr/molokai)
+* nerd tree [https://github.com/scrooloose/nerdtree](https://github.com/scrooloose/nerdtree)
+* pathogen.vim [https://github.com/tpope/vim-pathogen](https://github.com/tpope/vim-pathogen)
+* tagbar [https://github.com/majutsushi/tagbar](https://github.com/majutsushi/tagbar)
+* vim-go [https://github.com/fatih/vim-go](https://github.com/fatih/vim-go)
