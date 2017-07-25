@@ -48,6 +48,7 @@ let NERDTreeWinSize=20
 let NERDTreeWinPos='left'
 map <C-n> :NERDTreeMirror<CR>
 map <C-n> :NERDTreeToggle<CR>
+let NERDTreeIgnore=['\.o$', '\.a$', '\.so$']
 
 
 " switch tabs
