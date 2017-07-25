@@ -3,9 +3,9 @@
 let s:Bookmark = {}
 let g:NERDTreeBookmark = s:Bookmark
 
-" FUNCTION: Bookmark.activate(nerdtree) {{{1
-function! s:Bookmark.activate(nerdtree, ...)
-    call self.open(a:nerdtree, a:0 ? a:1 : {})
+" FUNCTION: Bookmark.activate() {{{1
+function! s:Bookmark.activate(...)
+    call self.open(a:0 ? a:1 : {})
 endfunction
 
 " FUNCTION: Bookmark.AddBookmark(name, path) {{{1
@@ -128,18 +128,26 @@ endfunction
 " Delete this bookmark. If the node for this bookmark is under the current
 " root, then recache bookmarks for its Path object
 function! s:Bookmark.delete()
+    let node = {}
+    try
+        let node = self.getNode(1)
+    catch /^NERDTree.BookmarkedNodeNotFoundError/
+    endtry
     call remove(s:Bookmark.Bookmarks(), index(s:Bookmark.Bookmarks(), self))
+    if !empty(node)
+        call node.path.cacheDisplayString()
+    endif
     call s:Bookmark.Write()
 endfunction
 
-" FUNCTION: Bookmark.getNode(nerdtree, searchFromAbsoluteRoot) {{{1
+" FUNCTION: Bookmark.getNode(searchFromAbsoluteRoot) {{{1
 " Gets the treenode for this bookmark
 "
 " Args:
 " searchFromAbsoluteRoot: specifies whether we should search from the current
 " tree root, or the highest cached node
-function! s:Bookmark.getNode(nerdtree, searchFromAbsoluteRoot)
-    let searchRoot = a:searchFromAbsoluteRoot ? a:nerdtree.root.AbsoluteTreeRoot() : a:nerdtree.root
+function! s:Bookmark.getNode(searchFromAbsoluteRoot)
+    let searchRoot = a:searchFromAbsoluteRoot ? g:NERDTreeDirNode.AbsoluteTreeRoot() : b:NERDTreeRoot
     let targetNode = searchRoot.findNode(self.path)
     if empty(targetNode)
         throw "NERDTree.BookmarkedNodeNotFoundError: no node was found for bookmark: " . self.name
@@ -147,12 +155,12 @@ function! s:Bookmark.getNode(nerdtree, searchFromAbsoluteRoot)
     return targetNode
 endfunction
 
-" FUNCTION: Bookmark.GetNodeForName(name, searchFromAbsoluteRoot, nerdtree) {{{1
+" FUNCTION: Bookmark.GetNodeForName(name, searchFromAbsoluteRoot) {{{1
 " Class method that finds the bookmark with the given name and returns the
 " treenode for it.
-function! s:Bookmark.GetNodeForName(name, searchFromAbsoluteRoot, nerdtree)
+function! s:Bookmark.GetNodeForName(name, searchFromAbsoluteRoot)
     let bookmark = s:Bookmark.BookmarkFor(a:name)
-    return bookmark.getNode(nerdtree, a:searchFromAbsoluteRoot)
+    return bookmark.getNode(a:searchFromAbsoluteRoot)
 endfunction
 
 " FUNCTION: Bookmark.GetSelected() {{{1
@@ -202,11 +210,8 @@ function! s:Bookmark.New(name, path)
     return newBookmark
 endfunction
 
-" FUNCTION: Bookmark.open(nerdtree, [options]) {{{1
+" FUNCTION: Bookmark.open([options]) {{{1
 "Args:
-"
-"nerdtree: the tree to load open the bookmark in
-"
 "A dictionary containing the following keys (all optional):
 "  'where': Specifies whether the node should be opened in new split/tab or in
 "           the previous window. Can be either 'v' (vertical split), 'h'
@@ -215,11 +220,11 @@ endfunction
 "  'keepopen': dont close the tree window
 "  'stay': open the file, but keep the cursor in the tree win
 "
-function! s:Bookmark.open(nerdtree, ...)
+function! s:Bookmark.open(...)
     let opts = a:0 ? a:1 : {}
 
     if self.path.isDirectory && !has_key(opts, 'where')
-        call self.toRoot(a:nerdtree)
+        call self.toRoot()
     else
         let opener = g:NERDTreeOpener.New(self.path, opts)
         call opener.open(self)
@@ -261,24 +266,26 @@ function! s:Bookmark.str()
     return '>' . self.name . ' ' . pathStr
 endfunction
 
-" FUNCTION: Bookmark.toRoot(nerdtree) {{{1
+" FUNCTION: Bookmark.toRoot() {{{1
 " Make the node for this bookmark the new tree root
-function! s:Bookmark.toRoot(nerdtree)
+function! s:Bookmark.toRoot()
     if self.validate()
         try
-            let targetNode = self.getNode(a:nerdtree, 1)
+            let targetNode = self.getNode(1)
         catch /^NERDTree.BookmarkedNodeNotFoundError/
-            let targetNode = g:NERDTreeFileNode.New(s:Bookmark.BookmarkFor(self.name).path, a:nerdtree)
+            let targetNode = g:NERDTreeFileNode.New(s:Bookmark.BookmarkFor(self.name).path)
         endtry
-        call a:nerdtree.changeRoot(targetNode)
+        call targetNode.makeRoot()
+        call b:NERDTree.render()
+        call targetNode.putCursorHere(0, 0)
     endif
 endfunction
 
-" FUNCTION: Bookmark.ToRoot(name, nerdtree) {{{1
+" FUNCTION: Bookmark.ToRoot(name) {{{1
 " Make the node for this bookmark the new tree root
-function! s:Bookmark.ToRoot(name, nerdtree)
+function! s:Bookmark.ToRoot(name)
     let bookmark = s:Bookmark.BookmarkFor(a:name)
-    call bookmark.toRoot(a:nerdtree)
+    call bookmark.toRoot()
 endfunction
 
 " FUNCTION: Bookmark.validate() {{{1
@@ -287,6 +294,7 @@ function! s:Bookmark.validate()
         return 1
     else
         call s:Bookmark.CacheBookmarks(1)
+        call b:NERDTree.render()
         call nerdtree#echo(self.name . "now points to an invalid location. See :help NERDTreeInvalidBookmarks for info.")
         return 0
     endif

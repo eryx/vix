@@ -40,7 +40,9 @@ endfunction
 
 "FUNCTION: Path.cacheDisplayString() {{{1
 function! s:Path.cacheDisplayString() abort
-    let self.cachedDisplayString = self.getLastPathComponent(1)
+    let self.cachedDisplayString = self.flagSet.renderToString()
+
+    let self.cachedDisplayString .= self.getLastPathComponent(1)
 
     if self.isExecutable
         let self.cachedDisplayString = self.cachedDisplayString . '*'
@@ -61,7 +63,7 @@ function! s:Path.cacheDisplayString() abort
     endif
 
     if self.isReadOnly
-        let self.cachedDisplayString .=  ' ['.g:NERDTreeGlyphReadOnly.']'
+        let self.cachedDisplayString .=  ' [RO]'
     endif
 endfunction
 
@@ -174,15 +176,11 @@ function! s:Path.copy(dest)
 
     call s:Path.createParentDirectories(a:dest)
 
-    if exists('g:NERDTreeCopyCmd')
-        let cmd_prefix = g:NERDTreeCopyCmd
-    else
-        let cmd_prefix = (self.isDirectory ? g:NERDTreeCopyDirCmd : g:NERDTreeCopyFileCmd)
-    endif
+    let dest = s:Path.WinToUnixPath(a:dest)
 
-    let cmd = cmd_prefix . " " . escape(self.str(), self._escChars()) . " " . escape(a:dest, self._escChars())
+    let cmd = g:NERDTreeCopyCmd . " " . escape(self.str(), self._escChars()) . " " . escape(dest, self._escChars())
     let success = system(cmd)
-    if v:shell_error != 0
+    if success != 0
         throw "NERDTree.CopyError: Could not copy ''". self.str() ."'' to: '" . a:dest . "'"
     endif
 endfunction
@@ -191,7 +189,7 @@ endfunction
 "
 "returns 1 if copying is supported for this OS
 function! s:Path.CopyingSupported()
-    return exists('g:NERDTreeCopyCmd') || (exists('g:NERDTreeCopyDirCmd') && exists('g:NERDTreeCopyFileCmd'))
+    return exists('g:NERDTreeCopyCmd')
 endfunction
 
 "FUNCTION: Path.copyingWillOverwrite(dest) {{{1
@@ -217,7 +215,7 @@ endfunction
 "FUNCTION: Path.createParentDirectories(path) {{{1
 "
 "create parent directories for this path if needed
-"without throwing any errors if those directories already exist
+"without throwing any errors is those directories already exist
 "
 "Args:
 "path: full path of the node whose parent directories may need to be created
@@ -230,7 +228,8 @@ endfunction
 
 "FUNCTION: Path.delete() {{{1
 "
-"Deletes the file or directory represented by this path.
+"Deletes the file represented by this path.
+"Deletion of directories is not supported
 "
 "Throws NERDTree.Path.Deletion exceptions
 function! s:Path.delete()
@@ -407,11 +406,11 @@ function! s:Path.isUnixHiddenPath()
     endif
 endfunction
 
-"FUNCTION: Path.ignore(nerdtree) {{{1
+"FUNCTION: Path.ignore() {{{1
 "returns true if this path should be ignored
-function! s:Path.ignore(nerdtree)
+function! s:Path.ignore()
     "filter out the user specified paths to ignore
-    if a:nerdtree.ui.isIgnoreFilterEnabled()
+    if b:NERDTreeIgnoreEnabled
         for i in g:NERDTreeIgnore
             if self._ignorePatternMatches(i)
                 return 1
@@ -419,18 +418,18 @@ function! s:Path.ignore(nerdtree)
         endfor
 
         for callback in g:NERDTree.PathFilters()
-            if {callback}({'path': self, 'nerdtree': a:nerdtree})
+            if {callback}({'path': self, 'nerdtree': b:NERDTree})
                 return 1
             endif
         endfor
     endif
 
     "dont show hidden files unless instructed to
-    if !a:nerdtree.ui.getShowHidden() && self.isUnixHiddenFile()
+    if b:NERDTreeShowHidden ==# 0 && self.isUnixHiddenFile()
         return 1
     endif
 
-    if a:nerdtree.ui.getShowFiles() ==# 0 && self.isDirectory ==# 0
+    if b:NERDTreeShowFiles ==# 0 && self.isDirectory ==# 0
         return 1
     endif
 
@@ -456,22 +455,10 @@ function! s:Path._ignorePatternMatches(pattern)
     return self.getLastPathComponent(0) =~# pat
 endfunction
 
-"FUNCTION: Path.isAncestor(path) {{{1
-"return 1 if this path is somewhere above the given path in the filesystem.
-"
-"a:path should be a dir
-function! s:Path.isAncestor(path)
-    if !self.isDirectory
-        return 0
-    endif
-
-    let this = self.str()
-    let that = a:path.str()
-    return stridx(that, this) == 0
-endfunction
-
 "FUNCTION: Path.isUnder(path) {{{1
 "return 1 if this path is somewhere under the given path in the filesystem.
+"
+"a:path should be a dir
 function! s:Path.isUnder(path)
     if a:path.isDirectory == 0
         return 0
@@ -585,16 +572,16 @@ function! s:Path.readInfoFromDisk(fullpath)
     endif
 endfunction
 
-"FUNCTION: Path.refresh(nerdtree) {{{1
-function! s:Path.refresh(nerdtree)
+"FUNCTION: Path.refresh() {{{1
+function! s:Path.refresh()
     call self.readInfoFromDisk(self.str())
-    call g:NERDTreePathNotifier.NotifyListeners('refresh', self, a:nerdtree, {})
+    call g:NERDTreePathNotifier.NotifyListeners('refresh', self, {})
     call self.cacheDisplayString()
 endfunction
 
-"FUNCTION: Path.refreshFlags(nerdtree) {{{1
-function! s:Path.refreshFlags(nerdtree)
-    call g:NERDTreePathNotifier.NotifyListeners('refreshFlags', self, a:nerdtree, {})
+"FUNCTION: Path.refreshFlags() {{{1
+function! s:Path.refreshFlags()
+    call g:NERDTreePathNotifier.NotifyListeners('refreshFlags', self, {})
     call self.cacheDisplayString()
 endfunction
 

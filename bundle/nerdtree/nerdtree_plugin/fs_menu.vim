@@ -74,7 +74,7 @@ endfunction
 function! s:promptToRenameBuffer(bufnum, msg, newFileName)
     echo a:msg
     if g:NERDTreeAutoDeleteBuffer || nr2char(getchar()) ==# 'y'
-        let quotedFileName = fnameescape(a:newFileName)
+        let quotedFileName = "'" . a:newFileName . "'"
         " 1. ensure that a new buffer is loaded
         exec "badd " . quotedFileName
         " 2. ensure that all windows which display the just deleted filename
@@ -105,11 +105,11 @@ function! NERDTreeAddNode()
 
     try
         let newPath = g:NERDTreePath.Create(newNodeName)
-        let parentNode = b:NERDTree.root.findNode(newPath.getParent())
+        let parentNode = b:NERDTreeRoot.findNode(newPath.getParent())
 
-        let newTreeNode = g:NERDTreeFileNode.New(newPath, b:NERDTree)
+        let newTreeNode = g:NERDTreeFileNode.New(newPath)
         if empty(parentNode)
-            call b:NERDTree.root.refresh()
+            call b:NERDTreeRoot.refresh()
             call b:NERDTree.render()
         elseif parentNode.isOpen || !empty(parentNode.children)
             call parentNode.addChild(newTreeNode, 1)
@@ -160,10 +160,10 @@ function! NERDTreeDeleteNode()
     let currentNode = g:NERDTreeFileNode.GetSelected()
     let confirmed = 0
 
-    if currentNode.path.isDirectory && currentNode.getChildCount() > 0
+    if currentNode.path.isDirectory
         let choice =input("Delete the current node\n" .
                          \ "==========================================================\n" .
-                         \ "STOP! Directory is not empty! To delete, type 'yes'\n" .
+                         \ "STOP! To delete this entire directory, type 'yes'\n" .
                          \ "" . currentNode.path.str() . ": ")
         let confirmed = choice ==# 'yes'
     else
@@ -245,7 +245,7 @@ function! NERDTreeCopyNode()
             try
                 let newNode = currentNode.copy(newNodePath)
                 if empty(newNode)
-                    call b:NERDTree.root.refresh()
+                    call b:NERDTreeRoot.refresh()
                     call b:NERDTree.render()
                 else
                     call NERDTreeRender()
