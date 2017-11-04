@@ -31,5 +31,6 @@ vix main.c
 * molokai scheme [https://github.com/tomasr/molokai](https://github.com/tomasr/molokai)
 * nerd tree [https://github.com/scrooloose/nerdtree](https://github.com/scrooloose/nerdtree)
 * pathogen.vim [https://github.com/tpope/vim-pathogen](https://github.com/tpope/vim-pathogen)
+* protobuf.vim [https://github.com/google/protobuf/blob/master/editors/proto.vim](https://github.com/google/protobuf/blob/master/editors/proto.vim)
 * tagbar [https://github.com/majutsushi/tagbar](https://github.com/majutsushi/tagbar)
 * vim-go [https://github.com/fatih/vim-go](https://github.com/fatih/vim-go)
