@@ -14,6 +14,19 @@ echo -e '\nalias vix="vim -u ~/.vim/bundle/vix/vimrc"\n' >> ~/.bashrc
 source ~/.bashrc
 ```
 
+## Code auto format (ex: CentOS)
+C, CPP
+``` shell
+yum install clang
+```
+
+Go: https://golang.org
+
+Python
+``` shell
+yum install python-pip
+pip install --upgrade yapf
+```
 
 ## use
 ``` shell
