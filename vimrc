@@ -44,7 +44,7 @@ colorscheme molokai
 
 " take NERDTree on/off
 "autocmd vimenter * NERDTree
-let NERDTreeWinSize=20
+let NERDTreeWinSize=26
 let NERDTreeWinPos='left'
 map <C-n> :NERDTreeMirror<CR>
 map <C-n> :NERDTreeToggle<CR>
@@ -80,9 +80,9 @@ nmap <A-down> :resize -2<CR>
 nmap <F8> :TagbarToggle<CR>
 
 
-" highlight over length (100) lines with RED bg-color
+" highlight over length (120) lines with RED bg-color
 highlight OverLength ctermbg=red ctermfg=white guibg=red
-match OverLength /\%101v.\+/
+match OverLength /\%121v.\+/
 
 
 " hot commands
@@ -106,5 +106,13 @@ autocmd BufReadPost *
 
 
 " clang-format
-autocmd FileType c,cpp ClangFormatAutoEnable
+" autocmd FileType c,cpp ClangFormatAutoEnable
+
+" python
+" install: pip install --upgrade yapf
+" project: https://github.com/google/yapf
+let g:formatter_yapf_style = 'pep8'
+
+" auto format
+au FileType python,c,cpp :au BufWritePre * Autoformat
 

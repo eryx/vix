@@ -24,6 +24,7 @@ vix main.c
 
 ## The third party software of this product includes or reference
 
+* auto format [https://github.com/Chiel92/vim-autoformat](https://github.com/Chiel92/vim-autoformat)
 * auto save [https://github.com/907th/vim-auto-save](https://github.com/907th/vim-auto-save)
 * clang-format [https://github.com/rhysd/vim-clang-format](https://github.com/rhysd/vim-clang-format)
 * ft-go [https://github.com/google/vim-ft-go](https://github.com/google/vim-ft-go)
