@@ -25,6 +25,7 @@ Go: https://golang.org
 Python
 ``` shell
 yum install python-pip
+pip install --upgrade pip
 pip install --upgrade yapf
 ```
 
@@ -48,3 +49,4 @@ vix main.c
 * protobuf.vim [https://github.com/google/protobuf/blob/master/editors/proto.vim](https://github.com/google/protobuf/blob/master/editors/proto.vim)
 * tagbar [https://github.com/majutsushi/tagbar](https://github.com/majutsushi/tagbar)
 * vim-go [https://github.com/fatih/vim-go](https://github.com/fatih/vim-go)
+* vim-phpfmt [https://github.com/Bubujka/vim-phpfmt](https://github.com/Bubujka/vim-phpfmt)
