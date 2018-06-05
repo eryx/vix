@@ -12,6 +12,8 @@ set nocompatible
 set switchbuf=useopen,usetab
 set hlsearch
 set pastetoggle=<F2>
+" set noswapfile
+set directory=~/.vim/tmp,/tmp
 
 " highlight the current line background
 set cursorline
@@ -112,7 +114,23 @@ autocmd BufReadPost *
 " install: pip install --upgrade yapf
 " project: https://github.com/google/yapf
 let g:formatter_yapf_style = 'pep8'
+" autocmd FileType python set tabstop=2 softtabstop=2 shiftwidth=2 expandtab autoindent fileformat=unix encoding=utf-8
+au BufNewFile,BufRead *.py
+    \ set tabstop=4
+    \ softtabstop=4
+    \ shiftwidth=4
+    \ expandtab
+    \ autoindent
+    \ fileformat=unix
+    \ encoding=utf-8
 
 " auto format
-au FileType python,c,cpp :au BufWritePre * Autoformat
+" au FileType python,c,cpp :au BufWritePre * Autoformat
+au FileType python,c,cpp nmap <F9> :Autoformat<CR>
+
+" web UI
+au BufNewFile,BufRead *.js, *.css, *.html, *.htm, *.tpl
+    \ set tabstop=2
+    \ softtabstop=2
+    \ shiftwidth=2
 
