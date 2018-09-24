@@ -128,12 +128,13 @@ au BufNewFile,BufRead *.py
 " au FileType python,c,cpp :au BufWritePre * Autoformat
 au FileType python,c,cpp nmap <F9> :Autoformat<CR>
 
-" web UI
-au BufNewFile,BufRead *.html, *.htm, *.tpl
-    \ set tabstop=2
-    \ softtabstop=2
-    \ shiftwidth=2
 
 " php
 au FileType php nmap <F9> :PhpAutoformat<CR>
+
+" web UI
+au BufNewFile,BufRead *.js, *.css, *.html, *.htm, *.tpl
+    \ set tabstop=2
+    \ softtabstop=2
+    \ shiftwidth=2
 
