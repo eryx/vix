@@ -15,6 +15,9 @@ set pastetoggle=<F2>
 " set noswapfile
 set directory=~/.vim/tmp,/tmp
 
+let &termencoding=&encoding
+set fileencodings=utf-8,gb18030,gbk,gb2312,big5
+
 " highlight the current line background
 set cursorline
 
@@ -133,8 +136,8 @@ au FileType python,c,cpp nmap <F9> :Autoformat<CR>
 au FileType php nmap <F9> :PhpAutoformat<CR>
 
 " web UI
-au BufNewFile,BufRead *.js, *.css, *.html, *.htm, *.tpl
-    \ set tabstop=2
-    \ softtabstop=2
-    \ shiftwidth=2
+" au BufNewFile,BufRead *.js, *.css, *.html, *.htm, *.tpl
+"     \ set tabstop=2
+"     \ softtabstop=2
+"     \ shiftwidth=2
 
