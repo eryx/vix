@@ -51,3 +51,4 @@ vix main.c
 * vim-go [https://github.com/fatih/vim-go](https://github.com/fatih/vim-go)
 * vim-markdown [https://github.com/plasticboy/vim-markdown](https://github.com/plasticboy/vim-markdown)
 * vim-phpfmt [https://github.com/Bubujka/vim-phpfmt](https://github.com/Bubujka/vim-phpfmt)
+* vim-toml [https://github.com/cespare/vim-toml](https://github.com/cespare/vim-toml)
