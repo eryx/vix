@@ -20,7 +20,11 @@ C, CPP
 yum install clang ctags
 ```
 
-Go: https://golang.org
+Go
+``` shell
+# EPEL Required (https://fedoraproject.org/wiki/EPEL)
+yum install golang
+```
 
 Python
 ``` shell
@@ -35,6 +39,11 @@ echo -e '#include <stdio.h>\n\nmain()\n{\n  printf("hello world");\n}\n' > main.
 
 vix main.c
 ```
+
+## Screenshot of UI
+
+![PIC 1](doc/images/demo.png)
+
 
 ## The third party software of this product includes or reference
 
