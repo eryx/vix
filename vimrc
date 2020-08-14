@@ -128,8 +128,8 @@ au BufNewFile,BufRead *.py
     \ encoding=utf-8
 
 " auto format
-" au FileType python,c,cpp :au BufWritePre * Autoformat
-au FileType python,c,cpp nmap <F9> :Autoformat<CR>
+" au FileType python,c,cpp,proto :au BufWritePre * Autoformat
+au FileType python,c,cpp,proto nmap <F9> :Autoformat<CR>
 
 
 " php
