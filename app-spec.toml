@@ -1,5 +1,6 @@
 kind = "AppSpec"
 roles = [101, 100]
+type_tags = ["devops"]
 
 [meta]
   id = "eryx-vix"
@@ -32,4 +33,8 @@ echo -e '
   cpu_min = 1
   mem_min = 64
   vol_min = 1
+
+[[urls]]
+  name = "gdoc"
+  url = "https://www.sysinner.cn/gdoc/view/app-guide/vix/x1.md"
 
