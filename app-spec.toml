@@ -1,0 +1,35 @@
+kind = "AppSpec"
+roles = [101, 100]
+
+[meta]
+  id = "eryx-vix"
+  name = "vim 加强版"
+  subtitle = "VIM 插件增强版"
+  version = "1.0"
+
+[[packages]]
+  name = "eryx-vix"
+  version = "1.0"
+
+[[executors]]
+  name = "eryx-vix"
+  exec_start = """
+mkdir -p /home/action/.vim/autoload
+mkdir -p /home/action/.vim/bundle/vix/
+
+rsync -av {{.inpack_prefix_eryx_vix}}/* /home/action/.vim/bundle/vix/
+
+/bin/cp -rf /home/action/.vim/bundle/vix/autoload/pathogen.vim /home/action/.vim/autoload/pathogen.vim
+
+echo -e '
+  alias vim=\"vim -u /home/action/.vim/bundle/vix/vimrc\"
+' >> /home/action/local/profile.d/eryx-vix.sh"""
+
+  [executors.plan]
+    on_boot = true
+
+[exp_res]
+  cpu_min = 1
+  mem_min = 64
+  vol_min = 1
+

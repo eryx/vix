@@ -1,0 +1,29 @@
+[project]
+name = "eryx-vix"
+version = "1.0.0"
+vendor = "ruilog.com"
+homepage = "https://www.ruilog.com"
+description = "Enhanced VIM"
+groups = ["dev/sys-runtime"]
+
+[files]
+allow = """
+LICENSE
+README.md
+bin/
+vimrc
+autoload/
+bundle/
+colors/
+compiler/
+doc/
+docs/
+ftdetect/
+ftplugin/
+indent/
+keymap/
+plugin/
+syntax/
+"""
+
+[scripts]
