@@ -131,6 +131,8 @@ au BufNewFile,BufRead *.py
 " au FileType python,c,cpp,proto :au BufWritePre * Autoformat
 au FileType python,c,cpp,proto nmap <F9> :Autoformat<CR>
 
+" rust
+let g:rustfmt_autosave = 1
 
 " php
 au FileType php nmap <F9> :PhpAutoformat<CR>

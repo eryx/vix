@@ -33,6 +33,11 @@ pip install --upgrade pip
 pip install --upgrade yapf
 ```
 
+rust
+``` shell
+rustup component add rustfmt
+```
+
 ## use
 ``` shell
 echo -e '#include <stdio.h>\n\nmain()\n{\n  printf("hello world");\n}\n' > main.c
@@ -56,6 +61,7 @@ vix main.c
 * nerd tree [https://github.com/scrooloose/nerdtree](https://github.com/scrooloose/nerdtree)
 * pathogen.vim [https://github.com/tpope/vim-pathogen](https://github.com/tpope/vim-pathogen)
 * protobuf.vim [https://github.com/google/protobuf/blob/master/editors/proto.vim](https://github.com/google/protobuf/blob/master/editors/proto.vim)
+* rust.vim [https://github.com/rust-lang/rust.vim](https://github.com/rust-lang/rust.vim)
 * tagbar [https://github.com/majutsushi/tagbar](https://github.com/majutsushi/tagbar)
 * vim-go [https://github.com/fatih/vim-go](https://github.com/fatih/vim-go)
 * vim-markdown [https://github.com/plasticboy/vim-markdown](https://github.com/plasticboy/vim-markdown)

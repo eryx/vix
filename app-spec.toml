@@ -4,9 +4,9 @@ type_tags = ["devops"]
 
 [meta]
   id = "eryx-vix"
-  name = "vim 加强版"
-  subtitle = "VIM 插件增强版"
+  name = "VIM Plus 开发工具"
   version = "1.0"
+  subtitle = "VIM 插件增强版开发工具"
 
 [[packages]]
   name = "eryx-vix"
