@@ -2,6 +2,13 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 let s:on_windows = has('win32') || has('win64')
+let s:dict_t = type({})
+let s:list_t = type([])
+if exists('v:true')
+    let s:bool_t = type(v:true)
+else
+    let s:bool_t = -1
+endif
 
 " helper functions {{{
 function! s:has_vimproc() abort
@@ -21,14 +28,14 @@ function! s:system(str, ...) abort
     let input = a:0 >= 1 ? a:1 : ''
 
     if a:0 == 0 || a:1 ==# ''
-        let output = s:has_vimproc() ?
+        silent let output = s:has_vimproc() ?
                     \ vimproc#system(command) : system(command)
     elseif a:0 == 1
-        let output = s:has_vimproc() ?
+        silent let output = s:has_vimproc() ?
                     \ vimproc#system(command, input) : system(command, input)
     else
         " ignores 3rd argument unless you have vimproc.
-        let output = s:has_vimproc() ?
+        silent let output = s:has_vimproc() ?
                     \ vimproc#system(command, input, a:2) : system(command, input)
     endif
 
@@ -36,35 +43,39 @@ function! s:system(str, ...) abort
 endfunction
 
 function! s:create_keyvals(key, val) abort
-    if type(a:val) == type({})
+    if type(a:val) == s:dict_t
         return a:key . ': {' . s:stringize_options(a:val) . '}'
+    elseif type(a:val) == s:bool_t
+        return a:key . (a:val == v:true ? ': true' : ': false')
+    elseif type(a:val) == s:list_t
+        return a:key . ': [' . join(a:val,',') . ']'
     else
-        return a:key . ': ' . a:val
+        return a:key . ': ''' . escape(a:val, '''') . ''''
     endif
 endfunction
 
 function! s:stringize_options(opts) abort
-    let dict_type = type({})
     let keyvals = map(items(a:opts), 's:create_keyvals(v:val[0], v:val[1])')
     return join(keyvals, ',')
 endfunction
 
 function! s:build_extra_options() abort
-    let extra_options = ''
-
     let opts = copy(g:clang_format#style_options)
     if has_key(g:clang_format#filetype_style_options, &ft)
         call extend(opts, g:clang_format#filetype_style_options[&ft])
     endif
 
-    let extra_options .= ', ' . s:stringize_options(opts)
+    let extra_options = s:stringize_options(opts)
+    if !empty(extra_options)
+        let extra_options = ', ' . extra_options
+    endif
 
     return extra_options
 endfunction
 
 function! s:make_style_options() abort
     let extra_options = s:build_extra_options()
-    return printf("'{BasedOnStyle: %s, IndentWidth: %d, UseTab: %s%s}'",
+    return printf("{BasedOnStyle: %s, IndentWidth: %d, UseTab: %s%s}",
                         \ g:clang_format#code_style,
                         \ (exists('*shiftwidth') ? shiftwidth() : &l:shiftwidth),
                         \ &l:expandtab==1 ? 'false' : 'true',
@@ -85,20 +96,6 @@ function! s:error_message(result) abort
         endfor
         echohl None
     endif
-endfunction
-
-function! s:restore_screen_pos(prev_screen) abort
-    let screen_line = line('w0')
-    if screen_line == a:prev_screen
-        return
-    endif
-    let delta = screen_line - a:prev_screen
-    if delta > 0
-        let keys = delta . "\<C-y>"
-    else
-        let keys = (-delta) . "\<C-e>"
-    endif
-    execute "normal!" keys
 endfunction
 
 function! clang_format#get_version() abort
@@ -156,10 +153,15 @@ endfunction
 
 function! s:shellescape(str) abort
     if s:on_windows && (&shell =~? 'cmd\.exe')
-        return '^"' . substitute(substitute(substitute(a:str,
-                    \ '[&|<>()^"%]', '^\0', 'g'),
-                    \ '\\\+\ze"', '\=repeat(submatch(0), 2)', 'g'),
-                    \ '\^"', '\\\0', 'g') . '^"'
+        " shellescape() surrounds input with single quote when 'shellslash' is on. But cmd.exe
+        " requires double quotes. Temporarily set it to 0.
+        let shellslash = &shellslash
+        set noshellslash
+        try
+            return shellescape(a:str)
+        finally
+            let &shellslash = shellslash
+        endtry
     endif
     return shellescape(a:str)
 endfunction
@@ -188,6 +190,8 @@ let g:clang_format#style_options = s:getg('clang_format#style_options', {})
 let g:clang_format#filetype_style_options = s:getg('clang_format#filetype_style_options', {})
 
 let g:clang_format#detect_style_file = s:getg('clang_format#detect_style_file', 1)
+let g:clang_format#enable_fallback_style = s:getg('clang_format#enable_fallback_style', 1)
+
 let g:clang_format#auto_format = s:getg('clang_format#auto_format', 0)
 let g:clang_format#auto_format_on_insert_leave = s:getg('clang_format#auto_format_on_insert_leave', 0)
 let g:clang_format#auto_formatexpr = s:getg('clang_format#auto_formatexpr', 0)
@@ -202,7 +206,11 @@ endfunction
 function! clang_format#format(line1, line2) abort
     let args = printf(' -lines=%d:%d', a:line1, a:line2)
     if ! (g:clang_format#detect_style_file && s:detect_style_file())
-        let args .= printf(' -style=%s ', s:make_style_options())
+        if g:clang_format#enable_fallback_style
+            let args .= ' ' . s:shellescape(printf('-style=%s', s:make_style_options())) . ' '
+        else
+            let args .= ' -fallback-style=none '
+        endif
     else
         let args .= ' -style=file '
     endif
@@ -219,38 +227,25 @@ endfunction
 
 " replace buffer {{{
 function! clang_format#replace(line1, line2, ...) abort
-
     call s:verify_command()
 
     let pos_save = a:0 >= 1 ? a:1 : getpos('.')
-    let screen_save = a:0 >= 2 ? a:2 : line('w0')
-    let sel_save = &l:selection
-    let &l:selection = 'inclusive'
-    let fold_closed_save = foldclosed(line('.'))
-    let [save_g_reg, save_g_regtype] = [getreg('g'), getregtype('g')]
-    let [save_unnamed_reg, save_unnamed_regtype] = [getreg(v:register), getregtype(v:register)]
+    let formatted = clang_format#format(a:line1, a:line2)
+    if !s:success(formatted)
+        call s:error_message(formatted)
+        return
+    endif
 
-    try
-        let formatted = clang_format#format(a:line1, a:line2)
-        if s:success(formatted)
-            call setreg('g', formatted, 'V')
-            silent keepjumps normal! ggVG"gp
-        else
-            call s:error_message(formatted)
-        endif
-    finally
-        call setreg(v:register, save_unnamed_reg, save_unnamed_regtype)
-        call setreg('g', save_g_reg, save_g_regtype)
-        let &l:selection = sel_save
-        call setpos('.', pos_save)
-        if fold_closed_save == -1
-            let l = line('.')
-            while foldclosed(l) >= 0
-                foldopen
-            endwhile
-        endif
-        call s:restore_screen_pos(screen_save)
-    endtry
+    let winview = winsaveview()
+    let splitted = split(formatted, '\n', 1)
+
+    silent! undojoin
+    if line('$') > len(splitted)
+        execute len(splitted) .',$delete' '_'
+    endif
+    call setline(1, splitted)
+    call winrestview(winview)
+    call setpos('.', pos_save)
 endfunction
 " }}}
 
@@ -268,7 +263,7 @@ endfunction
 
 function! clang_format#enable_format_on_insert() abort
     augroup plugin-clang-format-auto-format-insert
-        autocmd!
+        autocmd! * <buffer>
         autocmd InsertEnter <buffer> let s:pos_on_insertenter = getpos('.')
         autocmd InsertLeave <buffer> call s:format_inserted_area()
     augroup END
