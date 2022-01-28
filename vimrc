@@ -112,6 +112,10 @@ autocmd BufReadPost *
 
 " clang-format
 " autocmd FileType c,cpp ClangFormatAutoEnable
+"
+let s:configfile_def = "'clang-format -lines='.a:firstline.':'.a:lastline.' --assume-filename=\"'.expand('%:p').'\" -style=file'"
+let s:noconfigfile_def = "'clang-format -lines='.a:firstline.':'.a:lastline.' --assume-filename=\"'.expand('%:p').'\" -style=google'"
+let g:formatdef_clangformat = "g:ClangFormatConfigFileExists() ? (" . s:configfile_def . ") : (" . s:noconfigfile_def . ")"
 
 " python
 " install: pip install --upgrade yapf
