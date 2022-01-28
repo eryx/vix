@@ -1,8 +1,19 @@
+" Function for getting the verbose mode level
+function! s:GetVerboseMode(...)
+    let verbose = &verbose
+    if exists("g:autoformat_verbosemode ")
+      if g:autoformat_verbosemode > verbose
+        let verbose = g:autoformat_verbosemode
+      endif
+    endif
+    return verbose
+endfunction
+
 " Function for finding the formatters for this filetype
 " Result is stored in b:formatters
-function! s:find_formatters(...)
+function! s:FindFormatters(...)
     " Detect verbosity
-    let verbose = &verbose || g:autoformat_verbosemode == 1
+    let verbose = s:GetVerboseMode()
 
     " Extract filetype to be used
     let ftype = a:0 ? a:1 : &filetype
@@ -13,6 +24,14 @@ function! s:find_formatters(...)
         let ftypes = [compoundtype] + split(ftype, "[.]")
     else
         let ftypes = [compoundtype]
+    endif
+
+    " Support multiple formatters per file type
+    let run_all_formatters_var = "g:run_all_formatters_".compoundtype
+    if exists(run_all_formatters_var)
+        let b:run_all_formatters = eval(run_all_formatters_var)
+    else
+        let b:run_all_formatters = 0
     endif
 
     " Warn for backward incompatible configuration
@@ -34,7 +53,7 @@ function! s:find_formatters(...)
         endif
         if !exists(formatters_var)
             " No formatters defined
-            if verbose
+            if verbose > 0
                 echoerr "No formatters defined for supertype ".supertype
             endif
         else
@@ -49,7 +68,7 @@ function! s:find_formatters(...)
 
     if len(b:formatters) == 0
         " No formatters defined
-        if verbose
+        if verbose > 0
             echoerr "No formatters defined for filetype '".ftype."'."
         endif
         return 0
@@ -62,12 +81,12 @@ endfunction
 " works. If none works, autoindent the buffer.
 function! s:TryAllFormatters(...) range
     " Detect verbosity
-    let verbose = &verbose || g:autoformat_verbosemode == 1
+    let verbose = s:GetVerboseMode()
 
     " Make sure formatters are defined and detected
-    if !call('<SID>find_formatters', a:000)
+    if !call('<SID>FindFormatters', a:000)
         " No formatters defined
-        if verbose
+        if verbose > 0
             echomsg "No format definitions are defined for this filetype."
         endif
         call s:Fallback()
@@ -85,6 +104,9 @@ function! s:TryAllFormatters(...) range
     " Try all formatters, starting with selected one
     let s:index = b:current_formatter_index
 
+    " Save if at least one formatter was successful
+    let l:formatter_run_successfully = 0
+
     while 1
         " Formatter definition must be existent
         let formatdef_var = 'b:formatdef_'.b:formatters[s:index]
@@ -100,7 +122,7 @@ function! s:TryAllFormatters(...) range
         " once for getting the final expression
         let b:formatprg = eval(eval(formatdef_var))
 
-        if verbose
+        if verbose > 1
             echomsg "Trying definition from ".formatdef_var
             echomsg "Evaluated formatprg: ".b:formatprg
         endif
@@ -113,59 +135,78 @@ function! s:TryAllFormatters(...) range
             return 1
         endif
         if has("python3")
-            if verbose
+            if verbose > 1
                 echomsg "Using python 3 code..."
             endif
             let success = s:TryFormatterPython3()
         else
-            if verbose
+            if verbose > 1
                 echomsg "Using python 2 code..."
             endif
             let success = s:TryFormatterPython()
         endif
+
+        let s:index = (s:index + 1) % len(b:formatters)
+
         if success == 0
-            if verbose
+            if verbose > 1
                 echomsg "Definition in '".formatdef_var."' was successful."
             endif
-            return 1
+            " Check if we can run few formatters in row
+            if b:run_all_formatters == 1
+                let l:formatter_run_successfully += 1
+                if s:index != b:current_formatter_index
+                    if verbose > 1
+                        echomsg "Running next chained formatter."
+                    endif
+                endif
+            else
+                return 1
+            endif
         else
-            if verbose
+            if verbose > 0
                 echomsg "Definition in '".formatdef_var."' was unsuccessful."
             endif
-            let s:index = (s:index + 1) % len(b:formatters)
         endif
 
         if s:index == b:current_formatter_index
-            if verbose
-                echomsg "No format definitions were successful."
+            if b:run_all_formatters == 1 && l:formatter_run_successfully >= 1
+                if verbose > 1
+                    echomsg l:formatter_run_successfully." formatters were successfuly run."
+                endif
+                return 1
+            else
+                if verbose > 0
+                    echomsg "No format definitions were successful."
+                endif
+                " Tried all formatters, none worked
+                call s:Fallback()
+                return 0
             endif
-            " Tried all formatters, none worked
-            call s:Fallback()
-            return 0
         endif
     endwhile
 endfunction
 
 function! s:Fallback()
     " Detect verbosity
-    let verbose = &verbose || g:autoformat_verbosemode == 1
+    let verbose = s:GetVerboseMode()
 
     if exists('b:autoformat_remove_trailing_spaces') ? b:autoformat_remove_trailing_spaces == 1 : g:autoformat_remove_trailing_spaces == 1
-        if verbose
+        if verbose > 1
             echomsg "Removing trailing whitespace..."
         endif
         call s:RemoveTrailingSpaces()
     endif
 
     if exists('b:autoformat_retab') ? b:autoformat_retab == 1 : g:autoformat_retab == 1
-        if verbose
+        if verbose > 1
             echomsg "Retabbing..."
         endif
         retab
     endif
 
     if exists('b:autoformat_autoindent') ? b:autoformat_autoindent == 1 : g:autoformat_autoindent == 1
-        if verbose
+        if verbose > 1
             echomsg "Autoindenting..."
         endif
         " Autoindent code
@@ -182,7 +223,7 @@ endfunction
 " +python version
 function! s:TryFormatterPython()
     " Detect verbosity
-    let verbose = &verbose || g:autoformat_verbosemode == 1
+    let verbose = s:GetVerboseMode()
 
 python << EOF
 import vim, subprocess, os
@@ -208,11 +249,11 @@ stdoutdata, stderrdata = p.communicate(text)
 
 formattername = vim.eval('b:formatters[s:index]')
 if stderrdata:
-    if verbose:
+    if verbose > 0:
         print('Formatter {} has errors: {}'.format(formattername, stderrdata))
     vim.command('return 1')
 elif p.returncode > 0:
-    if verbose:
+    if verbose > 0:
         print('Formatter {} gives nonzero returncode: {}'.format(formattername, p.returncode))
     vim.command('return 1')
 else:
@@ -243,7 +284,7 @@ endfunction
 " +python3 version
 function! s:TryFormatterPython3()
     " Detect verbosity
-    let verbose = &verbose || g:autoformat_verbosemode == 1
+    let verbose = s:GetVerboseMode()
 
 python3 << EOF
 import vim, subprocess, os
@@ -264,18 +305,18 @@ try:
     p = subprocess.Popen(formatprg, env=env, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE)
     stdoutdata, stderrdata = p.communicate(text)
 except (BrokenPipeError, IOError):
-    if verbose:
+    if verbose > 0:
         raise
 else:
     formattername = vim.eval('b:formatters[s:index]')
     if stderrdata:
-        if verbose:
+        if verbose > 0:
             print('Formatter {} has errors: {}'.format(formattername, stderrdata))
     elif p.returncode > 0:
-        if verbose:
+        if verbose > 0:
             print('Formatter {} gives nonzero returncode: {}'.format(formattername, p.returncode))
     elif not stdoutdata:
-        if verbose:
+        if verbose > 0:
             print('Formatter {} gives empty result: {}'.format(formattername, stderrdata))
     else:
         # It is not certain what kind of line endings are being used by the format program.
@@ -307,12 +348,19 @@ endfunction
 " Create a command for formatting the entire buffer
 " Save and recall window state to prevent vim from jumping to line 1
 " Write and read viminfo to restore marks
-command! -nargs=? -range=% -complete=filetype -bar Autoformat let winview=winsaveview()|wviminfo|<line1>,<line2>call s:TryAllFormatters(<f-args>)|call winrestview(winview)|rviminfo
+command! -nargs=? -range=% -complete=filetype -bar
+    \ Autoformat let winview=winsaveview()|wviminfo|<line1>,<line2>call s:TryAllFormatters(<f-args>)|call winrestview(winview)|rviminfo
+
+" Create a command for formatting a single line, or range of lines
+" Save and recall window state to prevent vim from jumping to line 1
+" Write and read viminfo to restore marks
+command! -nargs=? -range -complete=filetype -bar
+    \ AutoformatLine let winview=winsaveview()|wviminfo|<line1>,<line2>call s:TryAllFormatters(<f-args>)|call winrestview(winview)|rviminfo
 
 
 " Functions for iterating through list of available formatters
 function! s:NextFormatter()
-    call s:find_formatters()
+    call s:FindFormatters()
     if !exists('b:current_formatter_index')
         let b:current_formatter_index = 0
     endif
@@ -321,7 +369,7 @@ function! s:NextFormatter()
 endfunction
 
 function! s:PreviousFormatter()
-    call s:find_formatters()
+    call s:FindFormatters()
     if !exists('b:current_formatter_index')
         let b:current_formatter_index = 0
     endif
@@ -331,7 +379,7 @@ function! s:PreviousFormatter()
 endfunction
 
 function! s:CurrentFormatter()
-    call s:find_formatters()
+    call s:FindFormatters()
     if !exists('b:current_formatter_index')
         let b:current_formatter_index = 0
     endif
