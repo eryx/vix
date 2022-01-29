@@ -63,6 +63,7 @@ vix main.c
 * protobuf.vim [https://github.com/google/protobuf/blob/master/editors/proto.vim](https://github.com/google/protobuf/blob/master/editors/proto.vim)
 * rust.vim [https://github.com/rust-lang/rust.vim](https://github.com/rust-lang/rust.vim)
 * tagbar [https://github.com/majutsushi/tagbar](https://github.com/majutsushi/tagbar)
+* vimagic [https://github.com/jreybert/vimagit](https://github.com/jreybert/vimagit)
 * vim-go [https://github.com/fatih/vim-go](https://github.com/fatih/vim-go)
 * vim-markdown [https://github.com/plasticboy/vim-markdown](https://github.com/plasticboy/vim-markdown)
 * vim-phpfmt [https://github.com/Bubujka/vim-phpfmt](https://github.com/Bubujka/vim-phpfmt)
