@@ -49,7 +49,7 @@ colorscheme molokai
 
 " take NERDTree on/off
 "autocmd vimenter * NERDTree
-let NERDTreeWinSize=26
+let NERDTreeWinSize=32
 let NERDTreeWinPos='left'
 map <C-n> :NERDTreeMirror<CR>
 map <C-n> :NERDTreeToggle<CR>
@@ -133,7 +133,13 @@ au BufNewFile,BufRead *.py
 
 " auto format
 " au FileType python,c,cpp,proto :au BufWritePre * Autoformat
-au FileType python,c,cpp,proto nmap <F9> :Autoformat<CR>
+au FileType python,c,cpp,proto,javascript nmap <F9> :Autoformat<CR>
+
+" vim-graphql
+""  au BufNewFile,BufRead *.prisma setfiletype graphql
+
+" npm -g install js-beautify
+let g:formatdef_jsbeautify_javascript = '"js-beautify -s 4 -w 120 -k --indent-empty-lines"'
 
 " rust
 let g:rustfmt_autosave = 1

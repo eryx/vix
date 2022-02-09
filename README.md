@@ -65,6 +65,7 @@ vix main.c
 * tagbar [https://github.com/majutsushi/tagbar](https://github.com/majutsushi/tagbar)
 * vimagic [https://github.com/jreybert/vimagit](https://github.com/jreybert/vimagit)
 * vim-go [https://github.com/fatih/vim-go](https://github.com/fatih/vim-go)
+* vim-graphql [https://github.com/jparise/vim-graphql](https://github.com/jparise/vim-graphql)
 * vim-markdown [https://github.com/plasticboy/vim-markdown](https://github.com/plasticboy/vim-markdown)
 * vim-phpfmt [https://github.com/Bubujka/vim-phpfmt](https://github.com/Bubujka/vim-phpfmt)
 * vim-toml [https://github.com/cespare/vim-toml](https://github.com/cespare/vim-toml)
