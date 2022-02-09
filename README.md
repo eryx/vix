@@ -68,4 +68,5 @@ vix main.c
 * vim-graphql [https://github.com/jparise/vim-graphql](https://github.com/jparise/vim-graphql)
 * vim-markdown [https://github.com/plasticboy/vim-markdown](https://github.com/plasticboy/vim-markdown)
 * vim-phpfmt [https://github.com/Bubujka/vim-phpfmt](https://github.com/Bubujka/vim-phpfmt)
+* vim-prettier [https://github.com/prettier/vim-prettier](https://github.com/prettier/vim-prettier)
 * vim-toml [https://github.com/cespare/vim-toml](https://github.com/cespare/vim-toml)

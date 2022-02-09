@@ -138,6 +138,12 @@ au FileType python,c,cpp,proto,javascript nmap <F9> :Autoformat<CR>
 " vim-graphql
 ""  au BufNewFile,BufRead *.prisma setfiletype graphql
 
+
+" vim-prettier
+"  npm -g install prettier
+au FileType graphql,gql let b:prettier_exec_cmd = "prettier-stylelint"
+au FileType graphql,gql nmap <F9> :Prettier<CR>
+
 " npm -g install js-beautify
 let g:formatdef_jsbeautify_javascript = '"js-beautify -s 4 -w 120 -k --indent-empty-lines"'
 
