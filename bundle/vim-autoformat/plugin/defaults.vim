@@ -52,8 +52,8 @@ if !exists('g:formatter_yapf_style')
     let g:formatter_yapf_style = 'pep8'
 endif
 if !exists('g:formatdef_yapf')
-    let s:configfile_def   = "'yapf -l '.a:firstline.'-'.a:lastline"
-    let s:noconfigfile_def = "'yapf --style=\"{based_on_style:'.g:formatter_yapf_style.',indent_width:'.shiftwidth().(&textwidth ? ',column_limit:'.&textwidth : '').'}\" -l '.a:firstline.'-'.a:lastline"
+    let s:configfile_def   = "'python3 -m yapf -l '.a:firstline.'-'.a:lastline"
+    let s:noconfigfile_def = "'python3 -m yapf --style=\"{based_on_style:'.g:formatter_yapf_style.',indent_width:'.shiftwidth().(&textwidth ? ',column_limit:'.&textwidth : '').'}\" -l '.a:firstline.'-'.a:lastline"
     let g:formatdef_yapf   = "g:YAPFFormatConfigFileExists() ? (" . s:configfile_def . ") : (" . s:noconfigfile_def . ")"
 endif
 
@@ -213,11 +213,7 @@ endif
 " So we create a tmp file here and then remove it afterwards
 if !exists('g:formatdef_xo_javascript')
     function! g:BuildXOLocalCmd()
-        let l:xo_js_tmp_file = fnameescape(tempname().".js")
-        let content = getline('1', '$')
-        call writefile(content, l:xo_js_tmp_file)
-        return "xo --fix ".l:xo_js_tmp_file." 1> /dev/null; exit_code=$?
-                    \ cat ".l:xo_js_tmp_file."; rm -f ".l:xo_js_tmp_file."; exit $exit_code"
+        return "npx xo --fix --stdin --stdin-filename ".bufname('%')
     endfunction
     let g:formatdef_xo_javascript = "g:BuildXOLocalCmd()"
 endif
@@ -310,7 +306,7 @@ if !exists('g:formatdef_eslint_local')
         let l:eslint_tmp_file = g:BuildESLintTmpFile(l:path, l:ext)
         let content = getline('1', '$')
         call writefile(content, l:eslint_tmp_file)
-        return l:prog." -c ".l:cfg." --fix ".l:eslint_tmp_file." 1> /dev/null; exit_code=$?
+        return l:prog." -c ".l:cfg." --fix ".l:eslint_tmp_file." 1> /dev/null; exit_code=$?;
                     \ cat ".l:eslint_tmp_file."; rm -f ".l:eslint_tmp_file."; exit $exit_code"
     endfunction
     let g:formatdef_eslint_local = "g:BuildESLintLocalCmd()"
@@ -509,8 +505,12 @@ if !exists('g:formatdef_goimports')
     let g:formatdef_goimports = '"goimports"'
 endif
 
+if !exists('g:formatdef_gofumpt')
+    let g:formatdef_gofumpt = '"gofumpt"'
+endif
+
 if !exists('g:formatters_go')
-    let g:formatters_go = ['gofmt_1', 'goimports', 'gofmt_2']
+    let g:formatters_go = ['gofmt_1', 'goimports', 'gofmt_2', 'gofumpt']
 endif
 
 " Rust
@@ -520,6 +520,15 @@ endif
 
 if !exists('g:formatters_rust')
     let g:formatters_rust = ['rustfmt']
+endif
+
+" Zig
+if !exists('g:formatdef_zigfmt')
+    let g:formatdef_zigfmt = '"zig fmt --stdin"'
+endif
+
+if !exists('g:formatters_zig')
+    let g:formatters_zig = ['zigfmt']
 endif
 
 " Dart
@@ -690,7 +699,7 @@ endif
 
 " Nix
 if !exists('g:formatdef_nix_format')
-    let g:formatdef_nix_format = '"nixfmt"'
+    let g:formatdef_nix_format = '"nixfmt".(&textwidth ? " --width=".&textwidth : "")'
 endif
 
 if !exists('g:formatters_nix')

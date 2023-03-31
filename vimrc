@@ -54,6 +54,8 @@ let NERDTreeWinPos='left'
 map <C-n> :NERDTreeMirror<CR>
 map <C-n> :NERDTreeToggle<CR>
 let NERDTreeIgnore=['\.o$', '\.a$', '\.so$']
+let g:NERDTreeDirArrowExpandable  = get(g:, 'NERDTreeDirArrowExpandable',  '+')
+let g:NERDTreeDirArrowCollapsible = get(g:, 'NERDTreeDirArrowCollapsible', '~')
 
 
 " switch tabs
@@ -133,7 +135,7 @@ au BufNewFile,BufRead *.py
 
 " auto format
 " au FileType python,c,cpp,proto :au BufWritePre * Autoformat
-au FileType python,c,cpp,proto,javascript nmap <F9> :Autoformat<CR>
+au FileType python,c,cpp,proto nmap <F9> :Autoformat<CR>
 
 " vim-graphql
 ""  au BufNewFile,BufRead *.prisma setfiletype graphql
@@ -141,11 +143,16 @@ au FileType python,c,cpp,proto,javascript nmap <F9> :Autoformat<CR>
 
 " vim-prettier
 "  npm -g install prettier
+let g:prettier#config#print_width = '100'
+let g:prettier#config#tab_width = '4'
+let g:prettier#config#use_tabs = 'false'
 au FileType graphql,gql let b:prettier_exec_cmd = "prettier-stylelint"
 au FileType graphql,gql nmap <F9> :Prettier<CR>
+au FileType javascript nmap <F9> :Prettier<CR>
 
 " npm -g install js-beautify
-let g:formatdef_jsbeautify_javascript = '"js-beautify -s 4 -w 120 -k --indent-empty-lines"'
+""  let g:formatdef_jsbeautify_javascript = '"js-beautify -s 4 -w 120 -k --indent-empty-lines"'
+
 
 " rust
 let g:rustfmt_autosave = 1
