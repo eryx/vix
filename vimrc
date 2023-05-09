@@ -160,6 +160,32 @@ let g:rustfmt_autosave = 1
 " php
 au FileType php nmap <F9> :PhpAutoformat<CR>
 
+" toml
+" install
+"  cargo install taplo-cli --locked
+" options
+"  https://taplo.tamasfe.dev/configuration/formatter-options.html
+fun! TomlFormatFile(path)
+  silent! let l:status = system('taplo -h')
+  if v:shell_error
+    return 0
+  endif
+
+  let s:lint = system('taplo check '. a:path)
+  if v:shell_error
+    echohl Error | echo s:lint | echohl None
+  else
+    let s:output = system('taplo format '. a:path)
+      if v:shell_error
+        echohl Error | echo s:output | echohl None
+      else
+        exec 'edit!'
+    endif
+  endif
+endfun
+command! TomlFormat call TomlFormatFile(expand('%:p'))
+au FileType toml nmap <F9> :TomlFormat <CR>
+
 " web UI
 " au BufNewFile,BufRead *.js, *.css, *.html, *.htm, *.tpl
 "     \ set tabstop=2
