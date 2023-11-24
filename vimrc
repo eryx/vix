@@ -49,7 +49,7 @@ colorscheme molokai
 
 " take NERDTree on/off
 "autocmd vimenter * NERDTree
-let NERDTreeWinSize=32
+let NERDTreeWinSize=48
 let NERDTreeWinPos='left'
 map <C-n> :NERDTreeMirror<CR>
 map <C-n> :NERDTreeToggle<CR>
@@ -149,6 +149,8 @@ let g:prettier#config#use_tabs = 'false'
 au FileType graphql,gql let b:prettier_exec_cmd = "prettier-stylelint"
 au FileType graphql,gql nmap <F9> :Prettier<CR>
 au FileType javascript nmap <F9> :Prettier<CR>
+au FileType html nmap <F9> :Prettier<CR>
+au FileType scss,css nmap <F9> :Prettier<CR>
 
 " npm -g install js-beautify
 ""  let g:formatdef_jsbeautify_javascript = '"js-beautify -s 4 -w 120 -k --indent-empty-lines"'

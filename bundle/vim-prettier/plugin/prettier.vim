@@ -5,7 +5,7 @@
 " Name Of File: prettier.vim
 "  Description: A vim plugin wrapper for prettier, pre-configured with custom default prettier settings.
 "   Maintainer: Mitermayer Reis <mitermayer.reis at gmail.com>
-"      Version: 1.0.0-beta
+"      Version: 1.0.0
 "        Usage: Use :help vim-prettier-usage, or visit https://github.com/prettier/vim-prettier
 "
 "==========================================================================================================
@@ -113,6 +113,8 @@ let g:prettier#config#bracket_spacing = get(g:,'prettier#config#bracket_spacing'
 " default: 'false'
 " See more: https://prettier.io/docs/en/options.html#jsx-brackets
 let g:prettier#config#jsx_bracket_same_line = get(g:,'prettier#config#jsx_bracket_same_line', 'false')
+" This option has another name for Prettier versions 2.4.0 and higher:
+let g:prettier#config#bracket_same_line = get(g:, 'prettier#config#bracket_same_line', 'false')
 
 " avoid wrapping a single arrow function param in parens
 " avoid|always
@@ -142,7 +144,7 @@ command! -nargs=? -range=% Prettier call prettier#Prettier(g:prettier#exec_cmd_a
 command! -nargs=? -range=% PrettierAsync call prettier#Prettier(1, <line1>, <line2>, g:prettier#partial_format)
 
 " prints vim-prettier version
-command! -nargs=? -range=% PrettierVersion echom '1.0.0-beta'
+command! -nargs=? -range=% PrettierVersion echom '1.0.0'
 
 " call prettier cli
 command! -nargs=? -range=% PrettierCli call prettier#PrettierCli(<q-args>)
