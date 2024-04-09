@@ -28,9 +28,8 @@ yum install golang
 
 Python
 ``` shell
-yum install python-pip
 pip install --upgrade pip
-pip install --upgrade yapf
+pip install --upgrade black
 ```
 
 rust
