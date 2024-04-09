@@ -119,23 +119,28 @@ let s:configfile_def = "'clang-format -lines='.a:firstline.':'.a:lastline.' --as
 let s:noconfigfile_def = "'clang-format -lines='.a:firstline.':'.a:lastline.' --assume-filename=\"'.expand('%:p').'\" -style=google'"
 let g:formatdef_clangformat = "g:ClangFormatConfigFileExists() ? (" . s:configfile_def . ") : (" . s:noconfigfile_def . ")"
 
-" python
+" python via yapf
 " install: pip install --upgrade yapf
 " project: https://github.com/google/yapf
-let g:formatter_yapf_style = 'pep8'
+"" let g:formatter_yapf_style = 'pep8'
 " autocmd FileType python set tabstop=2 softtabstop=2 shiftwidth=2 expandtab autoindent fileformat=unix encoding=utf-8
-au BufNewFile,BufRead *.py
-    \ set tabstop=4
-    \ softtabstop=4
-    \ shiftwidth=4
-    \ expandtab
-    \ autoindent
-    \ fileformat=unix
-    \ encoding=utf-8
+"" au BufNewFile,BufRead *.py
+""     \ set tabstop=4
+""     \ softtabstop=4
+""     \ shiftwidth=4
+""     \ expandtab
+""     \ autoindent
+""     \ fileformat=unix
+""     \ encoding=utf-8
+
+" python via black
+" install: pip install --upgrade black
+" project: https://github.com/psf/black
+au FileType python nmap <F9> :Black<CR>
 
 " auto format
-" au FileType python,c,cpp,proto :au BufWritePre * Autoformat
-au FileType python,c,cpp,proto nmap <F9> :Autoformat<CR>
+" au FileType c,cpp,proto :au BufWritePre * Autoformat
+au FileType c,cpp,proto,sql nmap <F9> :Autoformat<CR>
 
 " vim-graphql
 ""  au BufNewFile,BufRead *.prisma setfiletype graphql
