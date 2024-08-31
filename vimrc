@@ -140,7 +140,7 @@ au FileType python nmap <F9> :Black<CR>
 
 " auto format
 " au FileType c,cpp,proto :au BufWritePre * Autoformat
-au FileType c,cpp,proto,sql nmap <F9> :Autoformat<CR>
+au FileType c,cpp,proto nmap <F9> :Autoformat<CR>
 
 " vim-graphql
 ""  au BufNewFile,BufRead *.prisma setfiletype graphql
@@ -154,8 +154,30 @@ let g:prettier#config#use_tabs = 'false'
 au FileType graphql,gql let b:prettier_exec_cmd = "prettier-stylelint"
 au FileType graphql,gql nmap <F9> :Prettier<CR>
 au FileType javascript nmap <F9> :Prettier<CR>
-au FileType html nmap <F9> :Prettier<CR>
 au FileType scss,css nmap <F9> :Prettier<CR>
+
+" sql-formatter
+"  npm -g install sql-formatter
+fun! SqlFormatFile(path)
+  silent! let l:status = system('sql-formatter -h')
+  if v:shell_error
+    return 0
+  endif
+
+  let s:output = system('sql-formatter '. a:path .' -o '. a:path)
+    if v:shell_error
+      echohl Error | echo s:output | echohl None
+    else
+      exec 'edit!'
+  endif
+endfun
+command! SqlFormat call SqlFormatFile(expand('%:p'))
+au FileType sql nmap <F9> :SqlFormat <CR>
+
+
+""au FileType html let b:prettier#config#use_tabs = 'false'
+""au FileType html let b:prettier#config#tab_width = '2'
+au FileType html nmap <F9> :Prettier<CR>
 
 " npm -g install js-beautify
 ""  let g:formatdef_jsbeautify_javascript = '"js-beautify -s 4 -w 120 -k --indent-empty-lines"'
