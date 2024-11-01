@@ -94,11 +94,15 @@ match OverLength /\%121v.\+/
 
 " hot commands
 " change default mapleader from '\' to ','
-let mapleader = ","
-au FileType go nmap <leader>r <Plug>(go-run)
-au FileType go nmap <leader>b <Plug>(go-build)
-au FileType go nmap <leader>t <Plug>(go-test)
+"" let mapleader = ","
+"" au FileType go nmap <leader>r <Plug>(go-run)
+"" au FileType go nmap <leader>b <Plug>(go-build)
+"" au FileType go nmap <leader>t <Plug>(go-test)
+"" au FileType go :au BufWritePre * GoFmt
 
+" golang
+au FileType go nmap <F9> :GoImports<CR>
+autocmd BufWritePre *.go GoFmt
 
 " lightline bottom status bar
 let g:lightline = {

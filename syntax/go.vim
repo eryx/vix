@@ -48,7 +48,7 @@ syn case match
 
 syn keyword     goDirective         package import
 syn keyword     goDeclaration       var const type
-syn keyword     goDeclType          struct interface
+syn keyword     goDeclType          struct interface any
 
 hi def link     goDirective         Statement
 hi def link     goDeclaration       Keyword
@@ -66,7 +66,7 @@ hi def link     goLabel             Label
 hi def link     goRepeat            Repeat
 
 " Predefined types
-syn keyword     goType              chan map bool string error
+syn keyword     goType              chan map bool string error any comparable
 syn keyword     goSignedInts        int int8 int16 int32 int64 rune
 syn keyword     goUnsignedInts      byte uint uint8 uint16 uint32 uint64 uintptr
 syn keyword     goFloats            float32 float64
@@ -85,7 +85,7 @@ syn match       goDeclaration       /^func\>/
 
 " Predefined functions and values
 syn keyword     goBuiltins          append cap close complex copy delete imag len
-syn keyword     goBuiltins          make new panic print println real recover
+syn keyword     goBuiltins          make max min new panic print println real recover
 syn keyword     goConstants         iota true false nil
 
 hi def link     goBuiltins          Keyword
@@ -135,8 +135,8 @@ syn region      goBlock             start="{" end="}" transparent fold
 syn region      goParen             start='(' end=')' transparent
 
 " Integers
-syn match       goDecimalInt        "\<\d\+\([Ee]\d\+\)\?\>"
-syn match       goHexadecimalInt    "\<0x\x\+\>"
+syn match       goDecimalInt        "\<\(0\|[1-9][0-9_]*\)\([Ee]\d\+\)\?\>"
+syn match       goHexadecimalInt    "\<0x[0-9A-Fa-f_]\+\>"
 syn match       goOctalInt          "\<0\o\+\>"
 syn match       goOctalError        "\<0\o*[89]\d*\>"
 
