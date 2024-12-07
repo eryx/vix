@@ -160,6 +160,8 @@ au FileType graphql,gql nmap <F9> :Prettier<CR>
 au FileType javascript nmap <F9> :Prettier<CR>
 au FileType scss,css nmap <F9> :Prettier<CR>
 
+au FileType svelte nmap <F9> :Autoformat<CR>
+
 " sql-formatter
 "  npm -g install sql-formatter
 fun! SqlFormatFile(path)
