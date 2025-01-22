@@ -49,11 +49,11 @@ colorscheme molokai
 
 " take NERDTree on/off
 "autocmd vimenter * NERDTree
-let NERDTreeWinSize=48
+let NERDTreeWinSize=36
 let NERDTreeWinPos='left'
 map <C-n> :NERDTreeMirror<CR>
 map <C-n> :NERDTreeToggle<CR>
-let NERDTreeIgnore=['\.o$', '\.a$', '\.so$']
+let NERDTreeIgnore=['\.o$', '\.a$', '\.so$', '\.dylib$']
 let g:NERDTreeDirArrowExpandable  = get(g:, 'NERDTreeDirArrowExpandable',  '+')
 let g:NERDTreeDirArrowCollapsible = get(g:, 'NERDTreeDirArrowCollapsible', '~')
 
@@ -184,6 +184,13 @@ au FileType sql nmap <F9> :SqlFormat <CR>
 ""au FileType html let b:prettier#config#use_tabs = 'false'
 ""au FileType html let b:prettier#config#tab_width = '2'
 au FileType html nmap <F9> :Prettier<CR>
+
+"" " vim-jsx-pretty
+"" autocmd FileType javascript.jsx,javascriptreact setlocal shiftwidth=2 tabstop=2 expandtab
+"" let g:vim_jsx_pretty_enable = 1
+"" let g:vim_jsx_pretty_highlight_close_tag = 1
+"" " let g:vim_jsx_pretty_colorful_config = 1
+
 
 " npm -g install js-beautify
 ""  let g:formatdef_jsbeautify_javascript = '"js-beautify -s 4 -w 120 -k --indent-empty-lines"'
